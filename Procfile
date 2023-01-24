@@ -1,1 +1,1 @@
-web: gunicorn mini.wsgi
+web: gunicorn mini.wsg --log-file -
