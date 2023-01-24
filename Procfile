@@ -1,1 +1,1 @@
-web: gunicorn mini.wsgi --log-file -
+web: python mini/manage.py runserver 0.0.0.0:$PORT
