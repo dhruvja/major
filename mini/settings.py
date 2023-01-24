@@ -175,5 +175,3 @@ CORS_ALLOW_METHODS = [
     'POST',
     'PUT',
 ]
-
-django_heroku.settings(locals())
