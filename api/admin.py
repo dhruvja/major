@@ -20,7 +20,7 @@ class AdmissionFileAdminInline(admin.TabularInline):
 
 class AdmissionAdmin(ImportExportModelAdmin, ExportActionMixin,  admin.ModelAdmin):
     list_filter = [("batch", MultiSelectDropdownFilter), ("semester", MultiSelectDropdownFilter)] 
-    list_display = ( 'batch', 'semester', 'cet', 'comedk', 'management', 'diploma', 'cob')
+    list_display = ( 'batch', 'semester', 'cet', 'comedk', 'management', 'diploma', 'cob_incoming', 'cob_outgoing', 'snq')
     inlines = (AdmissionFileAdminInline, )
 
     def export (self, request, queryset): 
