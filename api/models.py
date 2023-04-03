@@ -14,6 +14,8 @@ class Admission(models.Model):
     management = models.IntegerField(default = 0)
     diploma = models.IntegerField(default = 0)
     cob = models.IntegerField(default = 0)
+    snq = models.IntegerField(default = 0) 
+    cob_outgoing = models.IntegerField(default = 0) 
 
     def __str__(self):
         return "Batch: " + self.batch + " Sem: " + self.semester 
