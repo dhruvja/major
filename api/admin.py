@@ -19,13 +19,14 @@ class AdmissionFileAdminInline(admin.TabularInline):
     model = AdmissionFile
 
 class AdmissionAdmin(ImportExportModelAdmin, ExportActionMixin,  admin.ModelAdmin):
-    list_filter = [("batch", MultiSelectDropdownFilter), ("semester", MultiSelectDropdownFilter)] 
-    list_display = ( 'batch', 'semester', 'cet', 'comedk', 'management', 'diploma', 'cob_incoming', 'cob_outgoing', 'snq')
+    list_filter = [("admission_year", MultiSelectDropdownFilter)] 
+    list_display = ( 'admission_year', 'cet', 'comedk', 'management', 'diploma', 'cob_incoming', 'cob_outgoing', 'snq', 'total')
     inlines = (AdmissionFileAdminInline, )
+    exclude = ('total',)
 
     def export (self, request, queryset): 
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM api_admission LEFT JOIN api_placement ON api_admission.batch = api_placement.batch")
+            cursor.execute("SELECT * FROM api_admission LEFT JOIN api_placement ON api_admission.admission_year = api_placement.admission_year")
             row = cursor.fetchall()
             print(row)
             column_names = []
@@ -63,22 +64,19 @@ class AdmissionAdmin(ImportExportModelAdmin, ExportActionMixin,  admin.ModelAdmi
         js = ('/media/hide_attribute.js',)
 
 class AdmissionFileAdmin(admin.ModelAdmin):
-    list_display = ('get_batch', 'get_semester', 'name', 'file')
-    list_filter = [("admission__batch", MultiSelectDropdownFilter), ("admission__semester", MultiSelectDropdownFilter)] 
+    list_display = ('get_batch', 'name', 'file')
+    list_filter = [("admission__batch", MultiSelectDropdownFilter)] 
     # list_filter = ("admission__batch", "admission__semester",)
     @admin.display(description='Batch', ordering='admission__batch')
     def get_batch(self, obj):
-        return obj.admission.batch
-    @admin.display(description='Semester', ordering='admission__semester')
-    def get_semester(self, obj):
-        return obj.admission.semester
+        return obj.admission.admission_year
 
 class ResultFileAdminInline(admin.TabularInline):
     model = ResultFile
 
 class ResultAdmin(ImportExportModelAdmin, ExportActionMixin,  admin.ModelAdmin):
-    list_filter = [("batch", MultiSelectDropdownFilter), ("semester", MultiSelectDropdownFilter)] 
-    list_display = ( 'batch', 'semester', 'without_backlog','single_backlog','double_backlog','triple_backlog','more_than_3_backlog','dropouts')
+    list_filter = [("admission_year", MultiSelectDropdownFilter), ("semester", MultiSelectDropdownFilter)] 
+    list_display = ( 'admission_year', 'semester', 'without_backlog','single_backlog','double_backlog','triple_backlog','more_than_3_backlog','dropouts')
     inlines = (ResultFileAdminInline, )
 
 class ResultFileAdmin(admin.ModelAdmin):
@@ -87,7 +85,7 @@ class ResultFileAdmin(admin.ModelAdmin):
     # list_filter = ("result__batch", "result__semester",)
     @admin.display(description='Batch', ordering='result__batch')
     def get_batch(self, obj):
-        return obj.result.batch
+        return obj.result.admission_year
     @admin.display(description='Semester', ordering='result__semester')
     def get_semester(self, obj):
         return obj.result.semester
@@ -96,8 +94,8 @@ class PlacementFileAdminInline(admin.TabularInline):
     model = PlacementFile
 
 class PlacementAdmin(ImportExportModelAdmin, ExportActionMixin, admin.ModelAdmin):
-    list_filter = [("batch", MultiSelectDropdownFilter), ] 
-    list_display = ( 'batch', 'on_campus','off_campus','internship')
+    list_filter = [("admission_year", MultiSelectDropdownFilter), ] 
+    list_display = ( 'admission_year', 'on_campus','off_campus','internship')
     inlines = (PlacementFileAdminInline, )
 
 class PlacementFileAdmin(admin.ModelAdmin):
@@ -106,7 +104,7 @@ class PlacementFileAdmin(admin.ModelAdmin):
     # list_filter = ("result__batch", "result__semester",)
     @admin.display(description='Batch', ordering='placement__batch')
     def get_batch(self, obj):
-        return obj.placement.batch
+        return obj.placement.admission_year
 
 admin.site.register(Admission, AdmissionAdmin)
 admin.site.register(AdmissionFile, AdmissionFileAdmin)

@@ -6,26 +6,28 @@ document.addEventListener("DOMContentLoaded", function () {
     const managementWrapper = document.querySelector(".field-management");
     const diplomaWrapper = document.querySelector(".field-diploma");
     const cobWrapper = document.querySelector(".field-cob");
-    console.log(value);
-    if (value === "1") {
-      cetWrapper.style.display = "block";
-      comedkWrapper.style.display = "block";
-      managementWrapper.style.display = "block";
-      diplomaWrapper.style.display = "none";
-      cobWrapper.style.display = "none";
-    } else if (value === "3") {
-      cetWrapper.style.display = "none";
-      comedkWrapper.style.display = "none";
-      managementWrapper.style.display = "none";
-      diplomaWrapper.style.display = "block";
-      cobWrapper.style.display = "block";
-    } else {
-      cetWrapper.style.display = "none";
-      comedkWrapper.style.display = "none";
-      managementWrapper.style.display = "none";
-      diplomaWrapper.style.display = "none";
-      cobWrapper.style.display = "none";
-    }
+    const totalWrapper =document.querySelector(".field-total");
+    // totalWrapper.style.display = "none";
+    // if (value === "1") {
+    //   cetWrapper.style.display = "block";
+    //   comedkWrapper.style.display = "block";
+    //   managementWrapper.style.display = "block";
+    //   diplomaWrapper.style.display = "none";
+    //   cobWrapper.style.display = "none";
+    // } else if (value === "3") {
+    //   cetWrapper.style.display = "none";
+    //   comedkWrapper.style.display = "none";
+    //   managementWrapper.style.display = "none";
+    //   diplomaWrapper.style.display = "block";
+    //   cobWrapper.style.display = "block";
+    // } 
+    // else {
+    //   cetWrapper.style.display = "none";
+    //   comedkWrapper.style.display = "none";
+    //   managementWrapper.style.display = "none";
+    //   diplomaWrapper.style.display = "none";
+    //   cobWrapper.style.display = "none";
+    // }
   }
 
   function exportOnlySems(value) {
@@ -45,6 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  toggleCity(0);
   const formatSelect = document.querySelector("select#id_semester");
   const actionSelect = document.querySelector("form#changelist-form select");
   if (formatSelect) {
