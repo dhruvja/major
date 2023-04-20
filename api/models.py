@@ -7,13 +7,13 @@ from django.contrib.auth.models import User
 class Admission(models.Model):
     YEAR_CHOICES = [(str(r), str(r)) for r in range(2010, datetime.date.today().year+1)]
     admission_year = models.CharField(max_length=255, choices=YEAR_CHOICES, default=datetime.datetime.now().year)
-    cet = models.IntegerField(default = 0)
+    CET = models.IntegerField(default = 0)
     comedk = models.IntegerField(default = 0)
     management = models.IntegerField(default = 0)
-    diploma = models.IntegerField(default = 0)
-    cob_incoming = models.IntegerField(default = 0)
     snq = models.IntegerField(default = 0) 
-    cob_outgoing = models.IntegerField(default = 0) 
+    diploma = models.IntegerField(default = 0)
+    CoB_incoming = models.IntegerField(default = 0)
+    CoB_outgoing = models.IntegerField(default = 0) 
     total = models.IntegerField(default = 0, blank = True, null=True)
 
     def __str__(self):

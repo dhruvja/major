@@ -20,7 +20,7 @@ class AdmissionFileAdminInline(admin.TabularInline):
 
 class AdmissionAdmin(ImportExportModelAdmin, ExportActionMixin,  admin.ModelAdmin):
     list_filter = [("admission_year", MultiSelectDropdownFilter)] 
-    list_display = ( 'admission_year', 'cet', 'comedk', 'management', 'diploma', 'cob_incoming', 'cob_outgoing', 'snq', 'total')
+    list_display = ( 'admission_year', 'CET', 'comedk', 'management', 'diploma', 'CoB_incoming', 'CoB_outgoing', 'snq', 'total')
     inlines = (AdmissionFileAdminInline, )
     exclude = ('total',)
 
