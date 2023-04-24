@@ -20,7 +20,7 @@ class Admission(models.Model):
         return "Batch: " + self.admission_year 
     
     def save(self):
-        self.total = self.CET + self.comedk + self.management + self.diploma + self.cob_incoming + self.snq + self.cob_outgoing 
+        self.total = self.CET + self.comedk + self.management + self.diploma + self.CoB_incoming + self.snq + self.CoB_outgoing 
         return super(Admission, self).save()
 
     class Meta:

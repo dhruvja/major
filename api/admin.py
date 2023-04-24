@@ -107,11 +107,11 @@ class PlacementFileAdmin(admin.ModelAdmin):
         return obj.placement.admission_year
 
 admin.site.register(Admission, AdmissionAdmin)
-admin.site.register(AdmissionFile, AdmissionFileAdmin)
+# admin.site.register(AdmissionFile, AdmissionFileAdmin)
 admin.site.register(Result, ResultAdmin)
-admin.site.register(ResultFile, ResultFileAdmin)
+# admin.site.register(ResultFile, ResultFileAdmin)
 admin.site.register(Placement, PlacementAdmin)
-admin.site.register(PlacementFile, PlacementFileAdmin)
+# admin.site.register(PlacementFile, PlacementFileAdmin)
 
 
 
