@@ -269,6 +269,10 @@ class OrderAdmin(admin.ModelAdmin):
         url = reverse("admin:placement_aggregate", args=[obj.pk])
         return format_html(f'<a href="{url}">📝</a>')
 
+class SubjectAdmin(ImportExportModelAdmin, ExportActionMixin, admin.ModelAdmin):
+    list_display = ('name', 'code')
+
+
 # admin.site.register(Admission, AdmissionAdmin)
 # admin.site.register(AdmissionFile, AdmissionFileAdmin)
 admin.site.register(StudentResult)
@@ -276,6 +280,6 @@ admin.site.register(StudentResult)
 # admin.site.register(Placement, PlacementAdmin)
 # admin.site.register(PlacementFile, PlacementFileAdmin)
 # admin.site.register(StudentProfile, StudentProfileAdmin)
-admin.site.register(Subject)
+admin.site.register(Subject, SubjectAdmin)
 
 
