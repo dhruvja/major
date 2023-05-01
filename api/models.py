@@ -49,13 +49,13 @@ class Result(models.Model):
     def __str__(self):
         return "Batch: " + self.admission_year + " Sem: " + self.semester 
 
-class ResultFile(models.Model):
-    result = models.ForeignKey(Result, on_delete=models.CASCADE, related_name='result')
-    name = models.CharField(max_length=255)
-    file = models.FileField()
+# class ResultFile(models.Model):
+#     result = models.ForeignKey(Result, on_delete=models.CASCADE, related_name='result')
+#     name = models.CharField(max_length=255)
+#     file = models.FileField()
 
-    def __str__(self):
-        return self.name 
+#     def __str__(self):
+#         return self.name 
 
 class Placement(models.Model):
    YEAR_CHOICES = [(str(r), str(r)) for r in range(2010, datetime.date.today().year+1)] 
@@ -74,6 +74,39 @@ class PlacementFile(models.Model):
 
     def __str__(self):
         return self.name
+
+class StudentProfile(models.Model):
+    YEAR_CHOICES = [(str(r), str(r)) for r in range(2010, datetime.date.today().year+1)] 
+    QUOTA_CHOICES = [('CET', 'CET'), ('MANAGEMENT', 'MANAGEMENT'), ('COMED-K', 'COMED-K'), ('SNQ', 'SNQ'), ('DIPLOMA', 'DIPLOMA')]
+    PLACEMENT_CHOICES = [('ON_CAMPUS', 'ON_CAMPUS'), ('OFF_CAMPUS', 'OFF_CAMPUS'), ('INTERNSHIP', 'INTERNSHIP')]
+    usn = models.CharField(max_length=255)
+    admission_year = models.CharField(max_length=255, choices=YEAR_CHOICES, default=datetime.datetime.now().year)
+    admission_quota = models.CharField(max_length=255, choices=QUOTA_CHOICES) 
+    placement = models.CharField(max_length=255, choices=PLACEMENT_CHOICES, blank=True, null=True)
+
+    def __str__(self):
+        return self.usn
+
+class Subject(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+class StudentResult(models.Model):
+    GRADE_CHOICES = [('S', 'S'), ('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D'), ('E', 'E'), ('F', 'F')]
+    SEM_CHOICES = [('1', '1'), ('2', '2'), ('3', '3'), ('4','4'), ('5', '5'), ('6', '6'), ('7','7'), ('8', '8'), ('SUMMER 1 YEAR', 'SUMMER 1 YEAR'), ('SUMMER 2 YEAR', 'SUMMER 2 YEAR'), ('SUMMER 3 YEAR', 'SUMMER 3 YEAR'), ('SUMMER 4 YEAR', 'SUMMER 4 YEAR')]
+    usn = models.ForeignKey(StudentProfile, on_delete=models.CASCADE, related_name='result_usn', default=1)
+    sem = models.CharField(max_length=255, choices=SEM_CHOICES)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='subject')
+    grade = models.CharField(max_length=255, choices=GRADE_CHOICES)
+
+    def __str__(self):
+        return self.grade
+
+
+
+
+
 
 
 
