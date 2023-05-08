@@ -215,21 +215,72 @@ class QuotaAggregateView(DetailView):
             "context": context
         }
 
+class ResultAggregateView(DetailView):
+    template_name="admin/results/detail.html"
+    model = StudentProfile
+
+    def get_context_data(self, *args, **kwargs):
+        students_without_f = StudentProfile.objects.exclude(result_usn__grade='F').distinct()
+        counts = {}
+        for student in students_without_f:
+            year = student.admission_year
+            if year not in counts:
+                counts[year] = 0
+            counts[year] += 1
+        print("Total students without F", counts)
+        students_with_f = StudentProfile.objects.all().order_by('-admission_year').distinct()
+        counts = {}
+        for student in students_with_f:
+            year = student.admission_year
+            if year not in counts:
+                counts[year] = {
+                    'zero_time': 0,
+                    'one_time': 0,
+                    'two_times': 0,
+                    'more_than_two_times': 0,
+                    'total': 0
+                }
+            f_count = student.result_usn.filter(grade='F').count()
+            counts[year]['total'] += 1
+            if f_count == 0:
+                counts[year]['zero_time'] += 1
+            elif f_count == 1:
+                counts[year]['one_time'] += 1
+            elif f_count == 2:
+                counts[year]['two_times'] += 1
+            else:
+                counts[year]['more_than_two_times'] += 1
+        print("Students with 1F, 2F and so on", counts)
+        res = [] 
+        context = super(ResultAggregateView,
+             self).get_context_data(*args, **kwargs)
+        print("This is context", context)
+        context["category"] = "MISC"       
+        context["xx"] = list(counts.items())
+        print(context['xx'][0][1])
+
+        # for year, data in context['xx'].items():
+            # if year
+        return {
+            **super().get_context_data(**kwargs),
+            **admin.site.each_context(self.request),
+            "opts": self.model._meta,
+            "context": context
+        }
+
 class PlacementAggregateView(DetailView):
     template_name = "admin/placement/detail.html"
     model = StudentProfile 
 
     def get_context_data(self, *args, **kwargs):
-        context = super(PlacementAggregateView,
-             self).get_context_data(*args, **kwargs)
-        print("This is context", context)
-        context["category"] = "MISC"       
         queryset = super().get_queryset()
         queryset = queryset.values('admission_year').annotate(
             on_campus_count=Count('placement', filter=Q(placement='ON_CAMPUS')),
             off_campus_count=Count('placement', filter=Q(placement='OFF_CAMPUS')),
             internship_count=Count('placement', filter=Q(placement='INTERNSHIP')),
         ).order_by('admission_year')
+        context = super(PlacementAggregateView,
+             self).get_context_data(*args, **kwargs)
         # convert ValuesQuerySet to QuerySet
         queryset = list(queryset)
         print("This is queryset", queryset)
@@ -243,7 +294,7 @@ class PlacementAggregateView(DetailView):
 
 @admin.register(StudentProfile)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['usn', 'admission_year', 'admission_quota', 'quota_aggregate', 'placement_aggregate']
+    list_display = ['usn', 'admission_year', 'admission_quota', 'quota_aggregate', 'placement_aggregate', 'result_aggregate']
     inlines = (StudentResultInline, )
 
     def get_urls(self):
@@ -258,6 +309,11 @@ class OrderAdmin(admin.ModelAdmin):
                 self.admin_site.admin_view(PlacementAggregateView.as_view()),
                 name=f"placement_aggregate",
             ),
+            path(
+                "<pk>/result",
+                self.admin_site.admin_view(ResultAggregateView.as_view()),
+                name=f"result_aggregate",
+            ),
             *super().get_urls(),
         ]
 
@@ -268,6 +324,11 @@ class OrderAdmin(admin.ModelAdmin):
     def placement_aggregate(self, obj: StudentResult) -> str:
         url = reverse("admin:placement_aggregate", args=[obj.pk])
         return format_html(f'<a href="{url}">📝</a>')
+
+    def result_aggregate(self, obj: StudentResult) -> str:
+        url = reverse("admin:result_aggregate", args=[obj.pk])
+        return format_html(f'<a href="{url}">📝</a>')
+
 
 class SubjectAdmin(ImportExportModelAdmin, ExportActionMixin, admin.ModelAdmin):
     list_display = ('name', 'code')
