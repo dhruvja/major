@@ -94,7 +94,7 @@ class Subject(models.Model):
     def __str__(self):
         return self.name
 class StudentResult(models.Model):
-    GRADE_CHOICES = [('S', 'S'), ('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D'), ('E', 'E'), ('F', 'F')]
+    GRADE_CHOICES = [('S', 'S'), ('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D'), ('E', 'E'), ('F', 'F'), ('PP', 'PP'), ('NP', 'NP')]
     SEM_CHOICES = [('1', '1'), ('2', '2'), ('3', '3'), ('4','4'), ('5', '5'), ('6', '6'), ('7','7'), ('8', '8'), ('SUMMER 1 YEAR', 'SUMMER 1 YEAR'), ('SUMMER 2 YEAR', 'SUMMER 2 YEAR'), ('SUMMER 3 YEAR', 'SUMMER 3 YEAR'), ('SUMMER 4 YEAR', 'SUMMER 4 YEAR')]
     usn = models.ForeignKey(StudentProfile, on_delete=models.CASCADE, related_name='result_usn', default=1)
     sem = models.CharField(max_length=255, choices=SEM_CHOICES)
