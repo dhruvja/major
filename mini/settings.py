@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'ckeditor',
     'imagekit',
     'import_export',
     'django_admin_multiple_choice_list_filter',
