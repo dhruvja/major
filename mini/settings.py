@@ -97,8 +97,7 @@ WSGI_APPLICATION = 'mini.wsgi.application'
 #     }
 # }
 
-DATABASES = {'default': dj_database_url.parse('postgresql://postgres:Onlyrealfans@123@db.dhoycoriyzxnxhdxvcjk.supabase.co:5432/postgres')}
-
+DATABASES = {'default': dj_database_url.parse('postgres://postgres:Onlyrealfans@123@db.dhoycoriyzxnxhdxvcjk.supabase.co:5432/postgres')}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
