@@ -90,14 +90,14 @@ WSGI_APPLICATION = 'mini.wsgi.application'
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'employee',
+#         'NAME': 'major',
 #         'USER': 'root',
 #         'PASSWORD': 'password',
 #         'HOST': 'localhost'
 #     }
 # }
 
-DATABASES = {'default': dj_database_url.parse('postgres://postgres:MajorEmployee@123@db.xfotubkojdyyfpynziyc.supabase.co:6543/postgres')}
+DATABASES = {'default': dj_database_url.parse('postgresql://postgres:Onlyrealfans@123@db.dhoycoriyzxnxhdxvcjk.supabase.co:5432/postgres')}
 
 
 # Password validation

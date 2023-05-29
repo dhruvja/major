@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Admission, AdmissionFile, StudentResult, Placement, PlacementFile, StudentProfile, Subject
+from .models import Admission, AdmissionFile,  Placement, PlacementFile, StudentProfile, Subject, ResultUpload, StudentResult
 from more_admin_filters import MultiSelectDropdownFilter
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, HttpResponseRedirect
@@ -333,6 +333,9 @@ class OrderAdmin(admin.ModelAdmin):
 class SubjectAdmin(ImportExportModelAdmin, ExportActionMixin, admin.ModelAdmin):
     list_display = ('name', 'code')
 
+class ResultUploadAdmin(admin.ModelAdmin):
+    list_display = ('admission_year', 'sem')
+
 
 # admin.site.register(Admission, AdmissionAdmin)
 # admin.site.register(AdmissionFile, AdmissionFileAdmin)
@@ -342,5 +345,6 @@ admin.site.register(StudentResult)
 # admin.site.register(PlacementFile, PlacementFileAdmin)
 # admin.site.register(StudentProfile, StudentProfileAdmin)
 admin.site.register(Subject, SubjectAdmin)
+admin.site.register(ResultUpload, ResultUploadAdmin)
 
 
