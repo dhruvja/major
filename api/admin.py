@@ -16,6 +16,7 @@ from django.views.generic import TemplateView
 from django.urls import path, reverse
 from django.views.generic.detail import SingleObjectMixin, DetailView
 from django.utils.html import format_html
+from .resources import SubjectAdminResource, StudentProfileAdminResource
 # from .actions import export_as_xls
 # from .models import Bos,NewCoursesIntroduced, Consultants, Bookchapter, Seedmoney, Proposal, Journal, Grant,StudentsHigherEducation, AwardsAndRecognistionTeachersStudents, ListMajorMinorResearchProjects, SpecialLectureInCollege, ConferenceAttendedByTeachers, ConferenceConductedInCollege, ProfessionalDevelopmentProg, CollabrativeActivity, FundingStudentProjects, WorkshopAndSeminars, FacultyProfile
 
@@ -296,6 +297,11 @@ class PlacementAggregateView(DetailView):
 class OrderAdmin(ImportExportModelAdmin, ExportActionMixin,  admin.ModelAdmin):
     list_display = ['usn', 'admission_year', 'admission_quota', 'quota_aggregate', 'placement_aggregate', 'result_aggregate']
     inlines = (StudentResultInline, )
+    resource_class = StudentProfileAdminResource
+    skip_unchanged = True
+    report_skipped = True
+    exclude = ('id',)
+    import_id_fields = ('usn', 'admission_year', 'admission_quota', 'placement')
 
     def get_urls(self):
         return [
@@ -331,7 +337,12 @@ class OrderAdmin(ImportExportModelAdmin, ExportActionMixin,  admin.ModelAdmin):
 
 
 class SubjectAdmin(ImportExportModelAdmin, ExportActionMixin, admin.ModelAdmin):
-    list_display = ('name', 'code')
+    list_display = ('name', 'code', 'credit')
+    resource_class = SubjectAdminResource
+    skip_unchanged = True
+    report_skipped = True
+    exclude = ('id',)
+    import_id_fields = ('username','email','password')
 
 class ResultUploadAdmin(admin.ModelAdmin):
     list_display = ('admission_year', 'sem')
