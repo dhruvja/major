@@ -345,7 +345,7 @@ class SubjectAdmin(ImportExportModelAdmin, ExportActionMixin, admin.ModelAdmin):
     import_id_fields = ('username','email','password')
 
 class ResultUploadAdmin(admin.ModelAdmin):
-    list_display = ('admission_year', 'sem')
+    list_display = ('admission_year', 'sem', 'file')
 
 
 # admin.site.register(Admission, AdmissionAdmin)
