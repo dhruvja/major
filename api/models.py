@@ -3,6 +3,8 @@ from django.db import models
 from django.contrib.auth.models import User
 import pandas as pd
 import math
+import threading
+import time
 
 
 # Create your models here.
@@ -115,52 +117,138 @@ class ResultUpload(models.Model):
     admission_year = models.CharField(max_length=255, choices=YEAR_CHOICES, default=datetime.datetime.now().year)
     sem = models.CharField(max_length=255, choices=SEM_CHOICES)
     file = models.FileField()
+    uploading_done = models.BooleanField(default=True)
+    error = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.admission_year
 
     def save(self, *args, **kwargs):
-        if self.file:
+        print("This is uploading", self.uploading_done)
+        if self.file and self.uploading_done:
             # Access the uploaded file here
             uploaded_file = self.file
             print(uploaded_file)
 
+            try:
+                sheet_in_db = ResultUpload.objects.filter(admission_year = self.admission_year, sem = self.sem).update(file = self.file, uploading_done = False)
+                print("This is filter and update", sheet_in_db)
+                if not sheet_in_db:
+                    self.uploading_done = False
+                    super().save(*args, **kwargs) 
+                # sheet_in_db.file = self.file
+                # sheet_in_db.uploading_done = False
+                # sheet_in_db.save()
+            except:
+                self.uploading_done = False
+                super().save(*args, **kwargs)
+                # ResultUpload.objects.create(admission_year = self.admission_year, sem = self.sem, file = self.file, uploading_done = False)
             # Process the file as needed
             # ...
-            data_frame = pd.read_excel(uploaded_file, engine='openpyxl')
-            column_names = data_frame.columns.tolist()
-            sem = self.sem
+            try:
+                sheet_in_db = ResultUpload.objects.get(admission_year = self.admission_year, sem = self.sem)
+                print("this is sheet in db", sheet_in_db.file, sheet_in_db.uploading_done)
+            except:
+                print("Not found in db")
 
-            for col, row in data_frame.iterrows():
+            t = threading.Thread(target=ResultUpload.upload, args=(uploaded_file, self.sem, self.admission_year), kwargs={})
+            t.setDaemon(True)
+            t.start()
+            # data_frame = pd.read_excel(uploaded_file, engine='openpyxl')
+            # column_names = data_frame.columns.tolist()
+            # sem = self.sem
+
+            # for col, row in data_frame.iterrows():
+            #     try:
+            #         usn = StudentProfile.objects.get(pk = row[0])
+            #     except: 
+            #         continue
+            #     total_columns = len(column_names)
+            #     for i in range(1, total_columns):
+            #         try:
+            #             print(f"Adding {i} column")
+            #             if column_names[i].upper() == "PE" or column_names[i].upper() == "OE":
+            #                 subject = Subject.objects.get(pk = row[i])
+            #             elif column_names[i].upper() == "GRADE":
+            #                 continue
+            #             else:
+            #                 subject = Subject.objects.get(pk = column_names[i])
+            #         except:
+            #             continue
+            #         if str(row[i]) != "nan":
+            #             if column_names[i].upper() == "PE" or column_names[i].upper() == "OE":
+            #                 grade = row[i+1].upper()
+            #             else:
+            #                 grade = row[i].upper()
+            #         else:
+            #             continue
+            #         try:
+            #             result_in_db = StudentResult.objects.get(usn = usn, grade = grade, subject = subject, sem = sem)
+            #             result_in_db.usn = usn
+            #             result_in_db.grade = grade 
+            #             result_in_db.subject =subject 
+            #             result_in_db.sem =sem 
+            #             result_in_db.save()
+            #         except Exception as e:
+            #             print(e)
+            #             result = StudentResult(usn = usn, grade = grade, subject = subject, sem = sem)
+            #             result.save()
+                    # try:
+                    #     sheet_in_db = ResultUpload.objects.get(admission_year = self.admission_year, sem = self.sem)
+                    # except:
+                    #     super().save(*args, **kwargs)
+    
+    def upload(uploaded_file, student_sem, student_admission_year):
+        print(uploaded_file, student_sem)
+        data_frame = pd.read_excel(uploaded_file, engine='openpyxl')
+        column_names = data_frame.columns.tolist()
+        sem = student_sem
+        start = time.time()
+
+        for col, row in data_frame.iterrows():
+            try:
+                usn = StudentProfile.objects.get(pk = row[0])
+            except: 
+                continue
+            total_columns = len(column_names)
+            for i in range(1, total_columns):
                 try:
-                    usn = StudentProfile.objects.get(pk = row[0])
-                except: 
-                    continue
-                total_columns = len(column_names)
-                for i in range(1, total_columns):
-                    try:
-                        subject = Subject.objects.get(pk = column_names[i])
-                    except:
+                    print(f"Adding {i} column")
+                    if column_names[i].upper() == "PE" or column_names[i].upper() == "OE":
+                        subject = Subject.objects.get(pk = row[i])
+                    elif column_names[i].upper() == "GRADE":
                         continue
-                    if str(row[i]) != "nan":
-                        grade = row[i].upper()
                     else:
-                        continue
-                    try:
-                        result_in_db = StudentResult.objects.get(usn = usn, grade = grade, subject = subject, sem = sem)
-                        result_in_db.usn = usn
-                        result_in_db.grade = grade 
-                        result_in_db.subject =subject 
-                        result_in_db.sem =sem 
-                        result_in_db.save()
-                    except Exception as e:
-                        print(e)
-                        result = StudentResult(usn = usn, grade = grade, subject = subject, sem = sem)
-                        result.save()
+                        subject = Subject.objects.get(pk = column_names[i])
+                except:
+                    continue
+                if str(row[i]) != "nan":
+                    if column_names[i].upper() == "PE" or column_names[i].upper() == "OE":
+                        grade = row[i+1].upper()
+                    else:
+                        grade = row[i].upper()
+                else:
+                    continue
+                try:
+                    result_in_db = StudentResult.objects.get(usn = usn, grade = grade, subject = subject, sem = sem)
+                    result_in_db.usn = usn
+                    result_in_db.grade = grade 
+                    result_in_db.subject =subject 
+                    result_in_db.sem =sem 
+                    result_in_db.save()
+                except Exception as e:
+                    print(e)
+                    result = StudentResult(usn = usn, grade = grade, subject = subject, sem = sem)
+                    result.save() 
         try:
-            sheet_in_db = ResultUpload.objects.get(admission_year = self.admission_year, sem = self.sem)
+            sheet_in_db = ResultUpload.objects.filter(admission_year = student_admission_year, sem = sem).update(uploading_done = True)
+            end = time.time()
+            time_taken = end - start
+            print("Time take is", time_taken)
+            print("This is filter and update", sheet_in_db)
         except:
-            super().save(*args, **kwargs)
+            print("error while updating")
+       
 
 
 
