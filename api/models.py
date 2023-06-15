@@ -118,14 +118,13 @@ class ResultUpload(models.Model):
     sem = models.CharField(max_length=255, choices=SEM_CHOICES)
     file = models.FileField()
     uploading_done = models.BooleanField(default=True)
-    error = models.TextField(blank=True, null=True)
+    error = models.TextField(blank=True, null=True, default='No Error')
 
     def __str__(self):
         return self.admission_year
 
     def save(self, *args, **kwargs):
-        print("This is uploading", self.uploading_done)
-        if self.file and self.uploading_done:
+        if self.file:
             # Access the uploaded file here
             uploaded_file = self.file
             print(uploaded_file)
@@ -200,8 +199,12 @@ class ResultUpload(models.Model):
     
     def upload(uploaded_file, student_sem, student_admission_year):
         print(uploaded_file, student_sem)
-        data_frame = pd.read_excel(uploaded_file, engine='openpyxl')
-        column_names = data_frame.columns.tolist()
+        try:
+            data_frame = pd.read_excel(uploaded_file, engine='openpyxl')
+            column_names = data_frame.columns.tolist()
+        except Exception as e:
+            sheet_in_db = ResultUpload.objects.filter(admission_year = student_admission_year, sem = student_sem).update(uploading_done = False, error=e) 
+            return
         sem = student_sem
         start = time.time()
 

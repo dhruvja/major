@@ -348,10 +348,19 @@ class ResultUploadAdmin(admin.ModelAdmin):
     list_display = ('admission_year', 'sem', 'file', 'uploading_done')
     exclude = ('uploading_done', 'error')
 
+class StudentResultAdmin(admin.ModelAdmin):
+    list_display = ('usn', 'sem', 'grade', 'subject_name', 'admission_year')
+    list_filter = ('usn__admission_year', 'sem', 'grade')
+
+    def subject_name(self, obj):
+        return obj.subject.name
+    
+    def admission_year(self, obj):
+        return obj.usn.admission_year
 
 # admin.site.register(Admission, AdmissionAdmin)
 # admin.site.register(AdmissionFile, AdmissionFileAdmin)
-admin.site.register(StudentResult)
+admin.site.register(StudentResult, StudentResultAdmin)
 # admin.site.register(ResultFile, ResultFileAdmin)
 # admin.site.register(Placement, PlacementAdmin)
 # admin.site.register(PlacementFile, PlacementFileAdmin)
