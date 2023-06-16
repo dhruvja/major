@@ -149,8 +149,14 @@ class ResultUpload(models.Model):
                 print("this is sheet in db", sheet_in_db.file, sheet_in_db.uploading_done)
             except:
                 print("Not found in db")
+            try:
+                data_frame = pd.read_excel(uploaded_file, engine='openpyxl')
+            except Exception as e:
+                print(e)
+                sheet_in_db = ResultUpload.objects.filter(admission_year = self.admission_year, sem = self.sem).update(uploading_done = False, error=e) 
+                return 
 
-            t = threading.Thread(target=ResultUpload.upload, args=(uploaded_file, self.sem, self.admission_year), kwargs={})
+            t = threading.Thread(target=ResultUpload.upload, args=(uploaded_file, data_frame, self.sem, self.admission_year), kwargs={})
             t.setDaemon(True)
             t.start()
             # data_frame = pd.read_excel(uploaded_file, engine='openpyxl')
@@ -197,12 +203,12 @@ class ResultUpload(models.Model):
                     # except:
                     #     super().save(*args, **kwargs)
     
-    def upload(uploaded_file, student_sem, student_admission_year):
+    def upload(uploaded_file, data_frame, student_sem, student_admission_year):
         print(uploaded_file, student_sem)
         try:
-            data_frame = pd.read_excel(uploaded_file, engine='openpyxl')
             column_names = data_frame.columns.tolist()
         except Exception as e:
+            print(e)
             sheet_in_db = ResultUpload.objects.filter(admission_year = student_admission_year, sem = student_sem).update(uploading_done = False, error=e) 
             return
         sem = student_sem
