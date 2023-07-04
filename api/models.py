@@ -111,6 +111,13 @@ class StudentResult(models.Model):
     def __str__(self):
         return self.grade
 
+class Template(models.Model):
+    name = models.CharField(max_length=255)
+    file = models.FileField()
+
+    def __str__(self):
+        return self.name
+
 class ResultUpload(models.Model):
     YEAR_CHOICES = [(str(r), str(r)) for r in range(2010, datetime.date.today().year+1)]  
     SEM_CHOICES = [('1', '1'), ('2', '2'), ('3', '3'), ('4','4'), ('5', '5'), ('6', '6'), ('7','7'), ('8', '8'), ('SUMMER 1 YEAR', 'SUMMER 1 YEAR'), ('SUMMER 2 YEAR', 'SUMMER 2 YEAR'), ('SUMMER 3 YEAR', 'SUMMER 3 YEAR'), ('SUMMER 4 YEAR', 'SUMMER 4 YEAR')]
