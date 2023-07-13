@@ -84,6 +84,7 @@ class StudentProfile(models.Model):
     QUOTA_CHOICES = [('CET', 'CET'), ('MANAGEMENT', 'MANAGEMENT'), ('COMED-K', 'COMED-K'), ('SNQ', 'SNQ'), ('DIPLOMA', 'DIPLOMA')]
     PLACEMENT_CHOICES = [('ON_CAMPUS', 'ON_CAMPUS'), ('OFF_CAMPUS', 'OFF_CAMPUS'), ('INTERNSHIP', 'INTERNSHIP')]
     usn = models.CharField(max_length=255, primary_key=True)
+    name = models.CharField(max_length = 255)
     admission_year = models.CharField(max_length=255, choices=YEAR_CHOICES, default=datetime.datetime.now().year)
     admission_quota = models.CharField(max_length=255, choices=QUOTA_CHOICES) 
     placement = models.CharField(max_length=255, choices=PLACEMENT_CHOICES, blank=True, null=True)
