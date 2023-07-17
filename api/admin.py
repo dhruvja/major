@@ -295,7 +295,7 @@ class PlacementAggregateView(DetailView):
 
 @admin.register(StudentProfile)
 class OrderAdmin(ImportExportModelAdmin, ExportActionMixin,  admin.ModelAdmin):
-    list_display = ['usn', 'name', 'admission_year',  'admission_quota', 'quota_aggregate', 'placement_aggregate', 'result_aggregate']
+    list_display = ['usn', 'admission_year',  'admission_quota', 'quota_aggregate', 'placement_aggregate', 'result_aggregate']
     inlines = (StudentResultInline, )
     resource_class = StudentProfileAdminResource
     skip_unchanged = True
